@@ -32,7 +32,9 @@ pub mod pptx;
 pub mod txt;
 pub mod xlsx;
 
-pub use doc::DocumentFormat;
+use std::{path::Path, io::{self, Read}};
+
+pub use doc::DocumentHandler;
 pub use docx::Docx;
 pub use odp::Odp;
 pub use ods::Ods;
@@ -40,3 +42,22 @@ pub use odt::Odt;
 pub use pptx::Pptx;
 pub use txt::Txt;
 pub use xlsx::Xlsx;
+
+// map file extension to document handler
+pub fn open<P: AsRef<Path>>(path: P) -> io::Result<Box<dyn Read>> {
+    let path = path.as_ref();
+    let ext = path.extension().unwrap().to_str().unwrap();
+    match ext {
+        "docx" => Ok(Box::new(Docx::open(path)?)),
+        "odp" => Ok(Box::new(Odp::open(path)?)),
+        "ods" => Ok(Box::new(Ods::open(path)?)),
+        "odt" => Ok(Box::new(Odt::open(path)?)),
+        "pptx" => Ok(Box::new(Pptx::open(path)?)),
+        "txt" => Ok(Box::new(Txt::open(path)?)),
+        "xlsx" => Ok(Box::new(Xlsx::open(path)?)),
+        _ => Err(io::Error::new(
+            io::ErrorKind::Other,
+            "Unsupported file format",
+        )),
+    }
+}

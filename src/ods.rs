@@ -12,7 +12,7 @@ use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
 
 use doc;
-use doc::{DocumentFormat, HasKind};
+use doc::{DocumentHandler, HasKind};
 
 pub struct Ods {
     path: PathBuf,
@@ -29,7 +29,7 @@ impl HasKind for Ods {
     }
 }
 
-impl DocumentFormat<Ods> for Ods {
+impl DocumentHandler<Ods> for Ods {
     fn open<P: AsRef<Path>>(path: P) -> io::Result<Ods> {
         let text = doc::open_doc_read_data(path.as_ref(), "content.xml", &["text:p"])?;
 

@@ -12,7 +12,7 @@ use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
 
-use doc::{DocumentFormat, HasKind};
+use doc::{DocumentHandler, HasKind};
 pub struct Txt {
     path: PathBuf,
     data: Cursor<String>,
@@ -27,7 +27,7 @@ impl HasKind for Txt {
     }
 }
 
-impl DocumentFormat<Txt> for Txt {
+impl DocumentHandler<Txt> for Txt {
     fn open<P: AsRef<Path>>(path: P) -> io::Result<Txt> {
         let txt = std::fs::read_to_string(path.as_ref())?;
 

@@ -12,7 +12,7 @@ use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
 
-use doc::{DocumentFormat, HasKind};
+use doc::{DocumentHandler, HasKind};
 
 pub struct Xlsx {
     path: PathBuf,
@@ -29,7 +29,7 @@ impl HasKind for Xlsx {
     }
 }
 
-impl DocumentFormat<Xlsx> for Xlsx {
+impl DocumentHandler<Xlsx> for Xlsx {
     fn open<P: AsRef<Path>>(path: P) -> io::Result<Xlsx> {
         let file = File::open(path.as_ref())?;
         let mut archive = ZipArchive::new(file)?;

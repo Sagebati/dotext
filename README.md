@@ -17,6 +17,7 @@ Supported Document
 - [x] OpenOffice Writer (odt)
 - [x] OpenOffice Spreadsheet (ods)
 - [x] OpenDocument Presentation (odp)
+- [x] Text (txt)
 - [ ] PDF
 
 Usage

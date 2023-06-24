@@ -20,7 +20,7 @@ pub trait HasKind {
     fn ext(&self) -> &'static str;
 }
 
-pub trait DocumentFormat<T>: Read + HasKind {
+pub trait DocumentHandler<T>: Read + HasKind {
     fn open<P: AsRef<Path>>(path: P) -> io::Result<T>;
 }
 
