@@ -10,6 +10,7 @@ use std::io;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
+// this contains common functions and definitions for all formats
 
 pub trait HasKind {
     // kind
@@ -23,10 +24,7 @@ pub trait MsDoc<T>: Read + HasKind {
     fn open<P: AsRef<Path>>(path: P) -> io::Result<T>;
 }
 
-pub trait OpenOfficeDoc<T>: Read + HasKind {
-    fn open<P: AsRef<Path>>(path: P) -> io::Result<T>;
-}
-
+// a common function for reading odp, odt, and ods files
 pub(crate) fn open_doc_read_data<P: AsRef<Path>>(
     path: P,
     content_name: &str,
