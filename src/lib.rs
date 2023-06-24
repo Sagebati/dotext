@@ -31,7 +31,7 @@ pub mod odt;
 pub mod pptx;
 pub mod xlsx;
 
-pub use doc::MsDoc;
+pub use doc::DocumentFormat;
 pub use docx::Docx;
 pub use odp::Odp;
 pub use ods::Ods;

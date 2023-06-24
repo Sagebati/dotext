@@ -12,7 +12,7 @@ use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
 
-use doc::{HasKind, MsDoc};
+use doc::{HasKind, DocumentFormat};
 
 pub struct Pptx {
     path: PathBuf,
@@ -29,7 +29,7 @@ impl HasKind for Pptx {
     }
 }
 
-impl MsDoc<Pptx> for Pptx {
+impl DocumentFormat<Pptx> for Pptx {
     fn open<P: AsRef<Path>>(path: P) -> io::Result<Pptx> {
         let file = File::open(path.as_ref())?;
         let mut archive = ZipArchive::new(file)?;
