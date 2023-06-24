@@ -1,6 +1,7 @@
 use zip::ZipArchive;
 
 use xml::events::Event;
+use xml::name::QName;
 use xml::reader::Reader;
 
 use std::clone::Clone;
@@ -46,18 +47,17 @@ pub(crate) fn open_doc_read_data<P: AsRef<Path>>(
 
     let mut xml_reader = Reader::from_str(xml_data.as_ref());
 
-    let mut buf = Vec::new();
     let mut txt = Vec::new();
 
     if xml_data.len() > 0 {
         let mut to_read = false;
         loop {
-            match xml_reader.read_event(&mut buf) {
+            match xml_reader.read_event() {
                 Ok(Event::Start(ref e)) => {
                     for tag in tags {
-                        if e.name() == tag.as_bytes() {
+                        if e.name() == QName(tag.as_bytes()) {
                             to_read = true;
-                            if e.name() == b"text:p" {
+                            if e.name() == QName(b"text:p") {
                                 txt.push("\n\n".to_string());
                             }
                             break;
@@ -66,7 +66,7 @@ pub(crate) fn open_doc_read_data<P: AsRef<Path>>(
                 }
                 Ok(Event::Text(e)) => {
                     if to_read {
-                        txt.push(e.unescape_and_decode(&xml_reader).unwrap());
+                        txt.push(e.unescape().unwrap().to_string());
                         to_read = false;
                     }
                 }

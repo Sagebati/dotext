@@ -1,3 +1,4 @@
+use xml::name::QName;
 use zip::ZipArchive;
 
 use xml::events::Event;
@@ -44,27 +45,26 @@ impl MsDoc<Pptx> for Pptx {
             }
         }
 
-        let mut buf = Vec::new();
         let mut txt = Vec::new();
 
         if xml_data.len() > 0 {
             let mut to_read = false;
             let mut xml_reader = Reader::from_str(xml_data.as_ref());
             loop {
-                match xml_reader.read_event(&mut buf) {
+                match xml_reader.read_event() {
                     Ok(Event::Start(ref e)) => match e.name() {
-                        b"a:p" => {
+                        QName(b"a:p") => {
                             to_read = true;
                             txt.push("\n".to_string());
                         }
-                        b"a:t" => {
+                        QName(b"a:t") => {
                             to_read = true;
                         }
                         _ => (),
                     },
                     Ok(Event::Text(e)) => {
                         if to_read {
-                            let text = e.unescape_and_decode(&xml_reader).unwrap();
+                            let text = e.unescape().unwrap().to_string();
                             txt.push(text);
                             to_read = false;
                         }

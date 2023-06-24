@@ -47,7 +47,6 @@ impl MsDoc<Docx> for Docx {
 
         let mut xml_reader = Reader::from_str(xml_data.as_ref());
 
-        let mut buf = Vec::new();
         let mut txt = Vec::new();
 
         if xml_data.len() > 0 {
@@ -64,7 +63,8 @@ impl MsDoc<Docx> for Docx {
                     },
                     Ok(Event::Text(e)) => {
                         if to_read {
-                            txt.push(e.unescape_and_decode(&xml_reader).unwrap());
+                            let e = e.unescape().unwrap();
+                            txt.push(e.to_string());
                             to_read = false;
                         }
                     }

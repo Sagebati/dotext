@@ -1,6 +1,7 @@
 use zip::ZipArchive;
 
 use xml::events::Event;
+use xml::name::QName;
 use xml::reader::Reader;
 
 use std::clone::Clone;
@@ -48,20 +49,19 @@ impl MsDoc<Xlsx> for Xlsx {
             }
         }
 
-        let mut buf = Vec::new();
         let mut txt = Vec::new();
 
         if xml_data.len() > 0 {
             let mut to_read = false;
             let mut xml_reader = Reader::from_str(xml_data.as_ref());
             loop {
-                match xml_reader.read_event(&mut buf) {
+                match xml_reader.read_event() {
                     Ok(Event::Start(ref e)) => match e.name() {
-                        b"t" => {
+                        QName(b"t") => {
                             to_read = true;
                             txt.push("\n".to_string());
                         }
-                        b"a:t" => {
+                        QName(b"a:t") => {
                             to_read = true;
                             txt.push("\n".to_string());
                         }
@@ -69,7 +69,7 @@ impl MsDoc<Xlsx> for Xlsx {
                     },
                     Ok(Event::Text(e)) => {
                         if to_read {
-                            let text = e.unescape_and_decode(&xml_reader).unwrap();
+                            let text = e.unescape().unwrap().to_string();
                             txt.push(text);
                             to_read = false;
                         }
