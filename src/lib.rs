@@ -29,6 +29,7 @@ pub mod odp;
 pub mod ods;
 pub mod odt;
 pub mod pptx;
+pub mod txt;
 pub mod xlsx;
 
 pub use doc::DocumentFormat;
@@ -37,4 +38,5 @@ pub use odp::Odp;
 pub use ods::Ods;
 pub use odt::Odt;
 pub use pptx::Pptx;
+pub use txt::Txt;
 pub use xlsx::Xlsx;
