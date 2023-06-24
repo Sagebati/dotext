@@ -1,6 +1,7 @@
 use zip::ZipArchive;
 
 use xml::events::Event;
+use xml::name::QName;
 use xml::reader::Reader;
 
 use std::clone::Clone;
@@ -38,6 +39,7 @@ impl MsDoc<Docx> for Docx {
         for i in 0..archive.len() {
             let mut c_file = archive.by_index(i).unwrap();
             if c_file.name() == "word/document.xml" {
+                // append the data to our xml_data buffer
                 c_file.read_to_string(&mut xml_data);
                 break;
             }
@@ -51,13 +53,13 @@ impl MsDoc<Docx> for Docx {
         if xml_data.len() > 0 {
             let mut to_read = false;
             loop {
-                match xml_reader.read_event(&mut buf) {
+                match xml_reader.read_event() {
                     Ok(Event::Start(ref e)) => match e.name() {
-                        b"w:p" => {
+                        QName(b"w:p") => {
                             to_read = true;
                             txt.push("\n\n".to_string());
                         }
-                        b"w:t" => to_read = true,
+                        QName(b"w:t") => to_read = true,
                         _ => (),
                     },
                     Ok(Event::Text(e)) => {
@@ -79,6 +81,7 @@ impl MsDoc<Docx> for Docx {
 
         Ok(Docx {
             path: path.as_ref().to_path_buf(),
+            //returning a cursor to the txt
             data: Cursor::new(txt.join("")),
         })
     }
