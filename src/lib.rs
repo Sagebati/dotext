@@ -32,7 +32,10 @@ pub mod pptx;
 pub mod txt;
 pub mod xlsx;
 
-use std::{path::Path, io::{self, Read}};
+use std::{
+    io::{self, Read},
+    path::Path,
+};
 
 pub use doc::DocumentHandler;
 pub use docx::Docx;
@@ -44,7 +47,7 @@ pub use txt::Txt;
 pub use xlsx::Xlsx;
 
 // map file extension to document handler
-pub fn open<P: AsRef<Path>>(path: P) -> io::Result<Box<dyn Read>> {
+pub fn read_text<P: AsRef<Path>>(path: P) -> io::Result<Box<dyn Read>> {
     let path = path.as_ref();
     let ext = path.extension().unwrap().to_str().unwrap();
     match ext {
