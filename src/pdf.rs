@@ -28,7 +28,7 @@ impl HasKind for Pdf {
 }
 
 impl DocumentHandler<Pdf> for Pdf {
-    fn open<P: AsRef<Path>>(path: P) -> io::Result<Pdf> {
+    fn open<P: AsRef<Path>>(_path: P) -> io::Result<Pdf> {
         todo!("implement Pdf::open")
         // let txt = std::fs::read_to_string(path.as_ref())?;
 
