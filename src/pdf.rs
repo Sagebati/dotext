@@ -55,12 +55,12 @@ mod tests {
 
     #[test]
     fn instantiate() {
-        let _ = Pdf::open(Path::new("samples/sample.txt"));
+        let _ = Pdf::open(Path::new("samples/sample.pdf"));
     }
 
     #[test]
     fn read() {
-        let mut f = Pdf::open(Path::new("samples/sample.txt")).unwrap();
+        let mut f = Pdf::open(Path::new("samples/sample.pdf")).unwrap();
         let mut data = String::new();
         let len = f.read_to_string(&mut data).unwrap();
         println!("len: {}, data: {}", len, data);

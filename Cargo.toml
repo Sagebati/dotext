@@ -10,4 +10,3 @@ repository = "https://github.com/anvie/dotext"
 zip = { version = "0.6" }
 quick-xml = "0.27.1"
 pdf-extract = "0.6.4"
-lopdf = "0.29.0"
