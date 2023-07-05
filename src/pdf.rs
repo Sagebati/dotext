@@ -1,5 +1,8 @@
+extern crate pdf_extract;
+
 use zip::ZipArchive;
 
+use self::pdf_extract::*;
 use xml::events::Event;
 use xml::name::QName;
 use xml::reader::Reader;
@@ -28,14 +31,14 @@ impl HasKind for Pdf {
 }
 
 impl DocumentHandler<Pdf> for Pdf {
-    fn open<P: AsRef<Path>>(_path: P) -> io::Result<Pdf> {
-        todo!("implement Pdf::open")
-        // let txt = std::fs::read_to_string(path.as_ref())?;
+    fn open<P: AsRef<Path>>(path: P) -> io::Result<Pdf> {
+        let bytes = std::fs::read(path.as_ref()).unwrap();
+        let out = pdf_extract::extract_text_from_mem(&bytes).unwrap();
 
-        // Ok(Pdf {
-        //     path: path.as_ref().to_path_buf(),
-        //     data: Cursor::new(txt),
-        // })
+        Ok(Pdf {
+            path: path.as_ref().to_path_buf(),
+            data: Cursor::new(out),
+        })
     }
 }
 

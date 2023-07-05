@@ -4,6 +4,7 @@ use xml::events::Event;
 use xml::name::QName;
 use xml::reader::Reader;
 
+use doc::{DocumentHandler, HasKind};
 use std::clone::Clone;
 use std::fs::File;
 use std::io;
@@ -11,8 +12,6 @@ use std::io::prelude::*;
 use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
-
-use doc::{DocumentHandler, HasKind};
 pub struct Txt {
     path: PathBuf,
     data: Cursor<String>,
