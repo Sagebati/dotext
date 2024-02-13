@@ -59,6 +59,7 @@ pub fn read_text<P: AsRef<Path>>(path: P) -> io::Result<Box<dyn Read>> {
         "odt" => Ok(Box::new(Odt::open(path)?)),
         "pptx" => Ok(Box::new(Pptx::open(path)?)),
         "txt" => Ok(Box::new(Txt::open(path)?)),
+        "pdf" => Ok(Box::new(Pdf::open(path)?)),
         "xlsx" => Ok(Box::new(Xlsx::open(path)?)),
         _ => Err(io::Error::new(
             io::ErrorKind::Other,
