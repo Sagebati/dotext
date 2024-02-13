@@ -11,12 +11,22 @@ use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
 
-use doc;
+use ::{doc, Odp};
 use doc::{DocumentHandler, HasKind};
 
 pub struct Ods {
     path: Option<PathBuf>,
     data: Cursor<String>,
+}
+
+impl Ods {
+    pub fn into_txt(self) -> String  {
+       self.data.into_inner()
+    }
+
+    pub fn txt(&self) -> &str {
+        self.data.get_ref()
+    }
 }
 
 impl HasKind for Ods {

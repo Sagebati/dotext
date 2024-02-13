@@ -12,10 +12,21 @@ use std::io::prelude::*;
 use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
+use Odp;
 
 pub struct Txt {
     path: Option<PathBuf>,
     data: Cursor<String>,
+}
+
+impl Txt {
+    pub fn into_txt(self) -> String  {
+       self.data.into_inner()
+    }
+
+    pub fn txt(&self) -> &str {
+        self.data.get_ref()
+    }
 }
 
 impl HasKind for Txt {

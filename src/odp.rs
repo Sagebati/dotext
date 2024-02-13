@@ -19,6 +19,16 @@ pub struct Odp {
     data: Cursor<String>,
 }
 
+impl Odp {
+    pub fn into_txt(self) -> String  {
+       self.data.into_inner()
+    }
+
+    pub fn txt(&self) -> &str {
+        self.data.get_ref()
+    }
+}
+
 impl HasKind for Odp {
     fn kind(&self) -> &'static str {
         "Open Office Presentation"
