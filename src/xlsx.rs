@@ -15,7 +15,7 @@ use zip::read::ZipFile;
 use doc::{DocumentHandler, HasKind};
 
 pub struct Xlsx {
-    path: PathBuf,
+    path: Option<PathBuf>,
     data: Cursor<String>,
 }
 
@@ -30,9 +30,8 @@ impl HasKind for Xlsx {
 }
 
 impl DocumentHandler<Xlsx> for Xlsx {
-    fn open<P: AsRef<Path>>(path: P) -> io::Result<Xlsx> {
-        let file = File::open(path.as_ref())?;
-        let mut archive = ZipArchive::new(file)?;
+    fn from_reader<R: Read + Seek>(reader: R) -> io::Result<Xlsx> {
+        let mut archive = ZipArchive::new(reader)?;
 
         let mut xml_data = String::new();
         //        let xml_data_list = Vec::new();
@@ -91,7 +90,7 @@ impl DocumentHandler<Xlsx> for Xlsx {
         }
 
         Ok(Xlsx {
-            path: path.as_ref().to_path_buf(),
+            path: None,
             data: Cursor::new(txt.join("")),
         })
     }

@@ -15,7 +15,7 @@ use doc;
 use doc::{DocumentHandler, HasKind};
 
 pub struct Odp {
-    path: PathBuf,
+    path: Option<PathBuf>,
     data: Cursor<String>,
 }
 
@@ -30,10 +30,16 @@ impl HasKind for Odp {
 }
 
 impl DocumentHandler<Odp> for Odp {
-    fn open<P: AsRef<Path>>(path: P) -> io::Result<Odp> {
-        let text = doc::open_doc_read_data(path.as_ref(), "content.xml", &["text:p", "text:span"])?;
+    fn open<P: AsRef<Path>>(path: P) -> io::Result<Self> {
+        let mut opt = Self::from_reader(File::open(&path)?)?;
+        opt.path = Some(path.as_ref().to_path_buf());
+        Ok(opt)
+    }
+
+    fn from_reader<R: Read + Seek>(r: R) -> io::Result<Odp> {
+        let text = doc::open_doc_read_data(r, "content.xml", &["text:p", "text:span"])?;
         Ok(Odp {
-            path: path.as_ref().to_path_buf(),
+            path: None,
             data: Cursor::new(text),
         })
     }

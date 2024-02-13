@@ -15,7 +15,7 @@ use zip::read::ZipFile;
 use doc::{DocumentHandler, HasKind};
 
 pub struct Pptx {
-    path: PathBuf,
+    path: Option<PathBuf>,
     data: Cursor<String>,
 }
 
@@ -30,9 +30,8 @@ impl HasKind for Pptx {
 }
 
 impl DocumentHandler<Pptx> for Pptx {
-    fn open<P: AsRef<Path>>(path: P) -> io::Result<Pptx> {
-        let file = File::open(path.as_ref())?;
-        let mut archive = ZipArchive::new(file)?;
+    fn from_reader<R: Read + Seek>(reader: R) -> io::Result<Pptx> {
+        let mut archive = ZipArchive::new(reader)?;
 
         let mut xml_data = String::new();
 
@@ -78,7 +77,7 @@ impl DocumentHandler<Pptx> for Pptx {
                                 xml_reader.buffer_position(),
                                 e
                             ),
-                        ))
+                        ));
                     }
                     _ => (),
                 }
@@ -86,7 +85,7 @@ impl DocumentHandler<Pptx> for Pptx {
         }
 
         Ok(Pptx {
-            path: path.as_ref().to_path_buf(),
+            path: None,
             data: Cursor::new(txt.join("")),
         })
     }

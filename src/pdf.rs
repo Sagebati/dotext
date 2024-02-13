@@ -16,10 +16,12 @@ use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
 
 use doc::{DocumentHandler, HasKind};
+
 pub struct Pdf {
-    path: PathBuf,
+    path: Option<PathBuf>,
     data: Cursor<String>,
 }
+
 impl HasKind for Pdf {
     fn kind(&self) -> &'static str {
         "Pdf File"
@@ -31,14 +33,19 @@ impl HasKind for Pdf {
 }
 
 impl DocumentHandler<Pdf> for Pdf {
-    fn open<P: AsRef<Path>>(path: P) -> io::Result<Pdf> {
-        let bytes = std::fs::read(path.as_ref()).unwrap();
-        let out = pdf_extract::extract_text_from_mem(&bytes).unwrap();
+    fn from_bytes(bytes: &[u8]) -> Pdf {
+        Pdf {
+            path: None,
+            data: Cursor::new(pdf_extract::extract_text_from_mem(&bytes).unwrap()),
+        }
+    }
 
-        Ok(Pdf {
-            path: path.as_ref().to_path_buf(),
-            data: Cursor::new(out),
-        })
+    fn from_reader<R: Read>(mut read: R) -> io::Result<Pdf> {
+        let mut buff = vec![];
+
+        read.read_to_end(&mut buff);
+
+        Ok(Self::from_bytes(&buff))
     }
 }
 

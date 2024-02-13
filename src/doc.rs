@@ -7,6 +7,7 @@ use xml::reader::Reader;
 use std::clone::Clone;
 use std::fs::File;
 use std::io;
+use std::io::Cursor;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
@@ -21,17 +22,24 @@ pub trait HasKind {
 }
 
 pub trait DocumentHandler<T>: Read + HasKind {
-    fn open<P: AsRef<Path>>(path: P) -> io::Result<T>;
+    fn open<P: AsRef<Path>>(path: P) -> io::Result<T> {
+        Self::from_reader(File::open(path)?)
+    }
+
+    fn from_bytes(bytes: &[u8]) -> T {
+        Self::from_reader(Cursor::new(bytes)).unwrap()
+    }
+
+    fn from_reader<R: Read + Seek>(r: R) -> io::Result<T>;
 }
 
 // a common function for reading odp, odt, and ods files
-pub(crate) fn open_doc_read_data<P: AsRef<Path>>(
-    path: P,
+pub(crate) fn open_doc_read_data(
+    reader: impl Read + Seek,
     content_name: &str,
     tags: &[&str],
 ) -> io::Result<String> {
-    let file = File::open(path.as_ref())?;
-    let mut archive = ZipArchive::new(file)?;
+    let mut archive = ZipArchive::new(reader)?;
 
     let mut xml_data = String::new();
 
@@ -77,7 +85,7 @@ pub(crate) fn open_doc_read_data<P: AsRef<Path>>(
                             xml_reader.buffer_position(),
                             e
                         ),
-                    ))
+                    ));
                 }
                 _ => (),
             }

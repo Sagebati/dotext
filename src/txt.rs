@@ -12,10 +12,12 @@ use std::io::prelude::*;
 use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
+
 pub struct Txt {
-    path: PathBuf,
+    path: Option<PathBuf>,
     data: Cursor<String>,
 }
+
 impl HasKind for Txt {
     fn kind(&self) -> &'static str {
         "Text File"
@@ -27,12 +29,13 @@ impl HasKind for Txt {
 }
 
 impl DocumentHandler<Txt> for Txt {
-    fn open<P: AsRef<Path>>(path: P) -> io::Result<Txt> {
-        let txt = std::fs::read_to_string(path.as_ref())?;
+    fn from_reader<R: Read + Seek>(mut r: R) -> io::Result<Txt> {
+        let mut buff = String::new();
+        r.read_to_string(&mut buff)?;
 
         Ok(Txt {
-            path: path.as_ref().to_path_buf(),
-            data: Cursor::new(txt),
+            path: None,
+            data: Cursor::new(buff),
         })
     }
 }
