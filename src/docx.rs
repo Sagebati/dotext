@@ -13,10 +13,21 @@ use std::path::{Path, PathBuf};
 use zip::read::ZipFile;
 
 use doc::{DocumentHandler, HasKind};
+use Odp;
 
 pub struct Docx {
     path: Option<PathBuf>,
     data: Cursor<String>,
+}
+
+impl Docx {
+    pub fn into_txt(self) -> String  {
+       self.data.into_inner()
+    }
+
+    pub fn txt(&self) -> &str {
+        self.data.get_ref()
+    }
 }
 
 impl HasKind for Docx {
